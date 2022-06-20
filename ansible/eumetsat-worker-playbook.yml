@@ -1,0 +1,91 @@
+---
+- name: EUMETSAT Worker
+  hosts: eumetsat-worker
+  become: true
+  tasks:
+    - name: Update
+      apt:
+        update_cache: yes
+        
+    - name: Install
+      apt:
+        pkg:
+        - docker.io 
+        - wireguard
+        - nfs-kernel-server
+        
+    - name: Sudo without password for admins group
+      copy:
+        content: '%admins ALL=(ALL:ALL) NOPASSWD:ALL'
+        dest: /etc/sudoers.d/admins
+        mode: 0440
+        validate: /usr/sbin/visudo -csf %s
+        
+    - name: Copy the special public key
+      ansible.posix.authorized_key:
+        user: rcar
+        state: present
+        key: "{{ lookup('file', '../docker/id_rsa.pub') }}"
+
+    - name: Configure the pool name
+      lineinfile:
+        path: /etc/environment
+        state: present
+        line: DASK_POOL_NAME=eumetsat
+
+    - name: Configure wireguard base network
+      copy:
+        src: example-wg.conf
+        dest: /etc/wireguard/wg.conf
+        mode: 0440
+
+    - name: Start wireguard base network
+      ignore_errors: yes
+      shell: |
+        sudo ip addr show wg
+        if [ $? -ne 0 ]; then
+            wg-quick up wg
+        fi
+
+    - name: Link mounted data
+      shell: |
+        mkdir -p /eumetsatdata/ad-hoc
+        mkdir -p /data
+        chmod -R a+r /data
+        ln -fs /eumetsatdata/ /data/eumetsat
+        
+    - name: Export mounted data
+      blockinfile:
+        path: /etc/exports
+        block: |
+            /eumetsatdata/ascat 10.8.0.0/24(ro,sync,fsid=101,no_subtree_check)
+            /eumetsatdata/cloud 10.8.0.0/24(ro,sync,fsid=102,no_subtree_check)
+            /eumetsatdata/geo-hsr-test-data 10.8.0.0/24(ro,sync,fsid=103,no_subtree_check)
+            /eumetsatdata/iasi 10.8.0.0/24(ro,sync,fsid=104,no_subtree_check)
+            /eumetsatdata/mviri 10.8.0.0/24(ro,sync,fsid=105,no_subtree_check)
+            /eumetsatdata/nwcsaf 10.8.0.0/24(ro,sync,fsid=106,no_subtree_check)
+            /eumetsatdata/nwcsaf-cf 10.8.0.0/24(ro,sync,fsid=107,no_subtree_check)
+            /eumetsatdata/psdc 10.8.0.0/24(ro,sync,fsid=108,no_subtree_check)
+            /eumetsatdata/seviri 10.8.0.0/24(ro,sync,fsid=109,no_subtree_check)
+            /eumetsatdata/ad-hoc 10.8.0.0/24(ro,sync,fsid=110,no_subtree_check)
+      notify: restart NFS server
+        
+    - name: Export share
+      ignore_errors: yes
+      command: "exportfs -rav"
+      
+    - name: Deploy startup script
+      tags:
+         - script
+      copy:
+        src: ../dask_wg
+        dest: ~rcar/
+        mode: 'preserve'
+    
+        
+  handlers:
+    - name: restart NFS server
+      service:
+        name: nfs-server
+        state: restarted
+        enabled: true        

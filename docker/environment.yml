@@ -1,0 +1,11 @@
+name: dask
+channels:
+        - conda-forge
+dependencies:
+        - python==3.10.4
+        - dask=2022.4.0
+        - distributed=2022.4.0
+        - bottleneck=1.3.4
+        - pip=22.0.4
+        - pip:
+            - git+https://github.com/gjoseph92/dask-worker-pools@main

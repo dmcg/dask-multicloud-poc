@@ -1,0 +1,15 @@
+name: jupyter
+channels:
+        - conda-forge
+dependencies:
+        - python==3.10.4
+        - ipython 
+        - jupyterlab 
+        - matplotlib 
+        - graphviz 
+        - python-graphviz 
+        - pytest
+        - ipytest
+        - pip
+        - pip:
+            - iplantuml
