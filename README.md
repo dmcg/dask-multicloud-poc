@@ -31,7 +31,7 @@ Builds the Docker image used to host the scheduler and workers.
 
 Resources for the Docker image.
 
-## ./ansible
+## ./ansible/
 
 An example Ansible playbook showing how to commission worker machines.
 
