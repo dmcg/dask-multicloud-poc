@@ -8,7 +8,7 @@ A novel (ab)use of Dask resources allows us to run data processing tasks on the
 workers in the cluster closest to the source data, so that communication between
 data centres is minimised. If combined with zarr to give access to huge
 hyper-cube datasets in object storage, we believe that the technique could 
-realise the potential to allow data-proximate distributed computing in the Cloud.
+realise the potential of data-proximate distributed computing in the Cloud.
 
 This repository documents a running proof-of-concept that addresses these problems.
 It contains
