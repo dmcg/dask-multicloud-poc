@@ -3,31 +3,13 @@
 # This script is triggered by the scheduler, once per site.
 # It sets up a wireguard router that talks back to the scheduler but also to
 # all other sites in a mesh network.
-# It then spawns workers as docker containers, which bind back to this router
+# It then spawns workers in docker containers, which bind back to this router
 # via wireguard.
 # The result is a mesh network of sites (via these routers), with each router
 # having a series of workers hanging off it.
 #
 # The router must be reachable by all sites on the wireguard port, meaning it
 # needs a public IP or at least an exposed/forwarded UDP port
-#
-# Internally, the wireguard network uses a private IPv6 network for
-# intercommunication between schedulers and workers.  This allows us to avoid
-# any clashes with IPv4 private ranges, which are mostly all committed.  It also
-# permits a very simple and fixed address structure:
-#  <static_private_component>:<site_id>:<node id>
-# static = fda5:c0ff:eeee
-# site id: 0=scheduler, 1=site 1, 2=site 2, etc
-# node id: 1 = router or scheduler, 11 = worker 1, 12 = worker 2, etc
-#
-# examples:
-#  fda5:c0ff:eeee:0::1  = always the scheduler IP
-#  fda5:c0ff:eeee:1::1  = router on site 1
-#  fda5:c0ff:eeee:3::12 = worker 2 on site 3
-#
-# Currently this receives necessary info via command line (typically over ssh)
-# but it could be easily changed to K8S
-
 
 echo
 echo Starting up workers on host $(hostname)
