@@ -11,10 +11,10 @@ A repository looking at how to use Dask for data-proximate compute.
 sudo ./setup-other.sh
 ```
 
-The Docker container that we use is available on [Docker Hub](https://hub.docker.com/repository/docker/dmcg/irisxarray), but can be built with 
+The Docker container that we use is available on [Docker Hub](https://hub.docker.com/repository/docker/dmcg/xarray), but can be built with 
 
 ```bash
-(cd docker/irisxarray; ./build.sh)
+(cd docker/xarray; ./build.sh)
 ```
 
 and published with
@@ -23,7 +23,7 @@ and published with
 (cd docker; ./publish.sh)
 ```
 
-We also use WireGuard for networking into ECMWF and EUMETSAT (the control plane network).
+We also use WireGuard for networking into ECMWF and EUMETSAT (the control plane network)
 
 ```bash
 sudo curl -L -o /etc/yum.repos.d/wireguard.repo https://copr.fedorainfracloud.org/coprs/jdoss/wireguard/repo/epel-7/jdoss-wireguard-epel-7.repo

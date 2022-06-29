@@ -2,8 +2,8 @@ FROM continuumio/miniconda3
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update
-RUN apt-get install -y wireguard iproute2 iputils-ping curl iptables tcpdump && \
+RUN apt-get update && \
+    apt-get install -y wireguard iproute2 iputils-ping curl iptables tcpdump && \
     apt-get clean
 
 RUN conda update -n base -c defaults conda

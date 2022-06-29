@@ -19,7 +19,7 @@ if [ $# != 4 ] ; then
     exit 1
 fi
 
-DOCKER_IMAGE=dmcg/irisxarray
+DOCKER_IMAGE=dmcg/xarray
 WG_GATEWAY_PRIV_KEY=$1
 WG_SITE_ID=$2
 # TODO format description
